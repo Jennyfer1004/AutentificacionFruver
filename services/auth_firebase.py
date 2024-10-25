@@ -5,7 +5,7 @@ import hashlib
 # Inicializa la aplicación con la clave privada
 jsonFirebase= 'firebasetoken.json'
 try:
-    cred = credentials.Certificate(jsonFirebase)
+    cred = credentials.Certificate("services/"+jsonFirebase)
 except:
     print("no olvides agregar el archivo firebasetoken.json, pero ojo no se le puede hacer commit al archivo")
 
