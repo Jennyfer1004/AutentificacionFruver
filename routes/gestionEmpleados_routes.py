@@ -10,7 +10,7 @@ def crearEmpleado():
     password = request.form.get("password")
     correo = request.form.get("correo")
     telefono = request.form.get("telefono")
-    token = request.form.get("token")
+    token = request.args.get("token")
     if(token == None):
         return jsonify({'status':'no se proporciono un token'})
     respuestaToken = TokenManager.validar_token(token)
@@ -24,8 +24,8 @@ def crearEmpleado():
 
 @gestionEmpleados.route('/gestion/eliminarempleado', methods=['POST'])
 def eliminarEmpleado():
-    cedula = request.form.get("cedula")
-    token = request.form.get("token")
+    cedula = request.args.get("cedula")
+    token = request.args.get("token")
     if(token == None):
         return jsonify({'status':'no se proporciono un token'})
     respuestaToken = TokenManager.validar_token(token)
@@ -39,7 +39,7 @@ def eliminarEmpleado():
 
 @gestionEmpleados.route('/gestion/consultarempleados', methods=['POST'])
 def consultarEmpleados():
-    token = request.form.get("token")
+    token = request.args.get("token")
     if(token == None):
         return jsonify({'status':'no se proporciono un token'})
     respuestaToken = TokenManager.validar_token(token)
@@ -50,13 +50,41 @@ def consultarEmpleados():
             return jsonify({'status':'no eres rol administrador'})
     return jsonify({'status':'token no valido'})
 
+@gestionEmpleados.route('/gestion/consultarempleado_nombre', methods=['POST'])
+def consultarEmpleado_nombre():
+    nombre = request.args.get("nombre")
+    token = request.args.get("token")
+    if(token == None):
+        return jsonify({'status':'no se proporciono un token'})
+    respuestaToken = TokenManager.validar_token(token)
+    if respuestaToken:
+        if respuestaToken.get('rol') == "administrador":
+            return jsonify(auth_firebase.consultar_empleado_nombre(nombre))
+        else:
+            return jsonify({'status':'no eres rol administrador'})
+    return jsonify({'status':'token no valido'})
+
+@gestionEmpleados.route('/gestion/consultarempleado_cedula', methods=['POST'])
+def consultarEmpleado_cedula():
+    cedula = request.args.get("cedula")
+    token = request.args.get("token")
+    if(token == None):
+        return jsonify({'status':'no se proporciono un token'})
+    respuestaToken = TokenManager.validar_token(token)
+    if respuestaToken:
+        if respuestaToken.get('rol') == "administrador":
+            return jsonify(auth_firebase.consultar_empleado_cedula(cedula))
+        else:
+            return jsonify({'status':'no eres rol administrador'})
+    return jsonify({'status':'token no valido'})
+
 @gestionEmpleados.route('/gestion/modificarempleado', methods=['POST'])
 def modificarEmpleado():
-    token = request.form.get("token")
-    cedula = request.form.get("cedula")
-    nuevo_nombre = request.form.get("nuevo_nombre")
-    nuevo_correo = request.form.get("nuevo_correo")
-    nuevo_telefono = request.form.get("nuevo_telefono")
+    token = request.args.get("token")
+    cedula = request.args.get("cedula")
+    nuevo_nombre = request.args.get("nuevo_nombre")
+    nuevo_correo = request.args.get("nuevo_correo")
+    nuevo_telefono = request.args.get("nuevo_telefono")
     if(token == None):
         return jsonify({'status':'no se proporciono un token'})
     if(cedula == None):

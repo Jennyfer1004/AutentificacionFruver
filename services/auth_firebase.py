@@ -86,7 +86,7 @@ def eliminar_empleado(cedula):
         return {'status': 'succesful', 'mensaje': 'usuario eliminado correctamente'}
     return {'status': 'no eliminado', 'mensaje': 'usuario no existe'}
 
-# Función para consultar empleados
+# Función para consultar todos los empleados
 def consultar_empleados():
     empleados = db.collection('usuarios').where('rol', '==', 'empleado').get()
     lista_empleados = [
@@ -94,6 +94,29 @@ def consultar_empleados():
         for empleado in empleados
     ]
     return lista_empleados if lista_empleados else {'status': 'no hay empleados', 'mensaje': 'usuario no existe'}
+
+# Función para consultar un empleado por su nombre
+def consultar_empleado_nombre(nombre_parcial):
+    empleados = db.collection('usuarios')\
+                  .where('rol', '==', 'empleado')\
+                  .order_by('nombre')\
+                  .start_at([nombre_parcial])\
+                  .end_at([nombre_parcial + '\uf8ff'])\
+                  .get()
+    lista_empleados = [
+        {k: v for k, v in empleado.to_dict().items() if k != 'password'}
+        for empleado in empleados
+    ]
+    return lista_empleados if lista_empleados else {'status': 'error', 'mensaje': f'No se encontraron empleados con un nombre parecido a {nombre_parcial}'}
+
+# Función para consultar un empleado por su cédula
+def consultar_empleado_cedula(cedula):
+    empleados = db.collection('usuarios').where('cedula', '==', cedula).where('rol', '==', 'empleado').get()
+    lista_empleados = [
+        {k: v for k, v in empleado.to_dict().items() if k != 'password'}
+        for empleado in empleados
+    ]
+    return lista_empleados if lista_empleados else {'status': 'error', 'mensaje': f'No se encontró un empleado con la cédula {cedula}'}
 
 # NO OLVIDEN PRIMERO CREAR SUS ADMINISTRADORES EN FIREBASE #
 #crear_usuario('1004926901', 'Jennyfer Natalia Garcia', 'jennyfer', 'jennyfer@example.com', '+57 542554344', 'administrador')
